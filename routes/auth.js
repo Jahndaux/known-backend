@@ -9,7 +9,8 @@ router.get('/test', async (req, res) => {
     const result = await pool.query('SELECT NOW()');
     res.json({ success: true, time: result.rows[0].now });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+
+res.status(500).json({ success: false, error: err.message || "Unknown error" });
   }
 });
 
