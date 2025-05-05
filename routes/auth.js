@@ -3,18 +3,6 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
 
-// Test route
-router.get('/test', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT NOW()');
-    res.json({ success: true, time: result.rows[0].now });
-  } catch (err) {
-
-res.status(500).json({ success: false, error: err.message || "Unknown error" });
-  }
-});
-
-// Register route
 router.post('/register', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -23,10 +11,15 @@ router.post('/register', async (req, res) => {
       'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email',
       [email, hashedPassword]
     );
-    res.status(201).json({ user: result.rows[0] });
+    res.status(201).json({ success: true, user: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Register Error:", err);
+    res.status(500).json({ 
+      success: false, 
+      error: err.message || JSON.stringify(err) || "Unknown error"
+    });
   }
 });
 
 module.exports = router;
+
